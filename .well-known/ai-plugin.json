@@ -1,0 +1,22 @@
+{
+   "schema_version": "v1",
+   "name_for_model": "carplusQABot",
+   "name_for_human": "\u683c\u4e0a\u5c0f\u5e6b\u624b",
+   "description_for_model": "This plugin provides access to a QA Bot to answer questions about services provided by Carplus, a ride-sharing company in Taiwan.",
+   "description_for_human": "\u6709\u95dc\u683c\u4e0a\u79df\u8eca\u7684\u554f\u984c\uff0c\u90fd\u53ef\u4ee5\u554f\u6211\uff01",
+   "auth": {
+      "type": "service_http",
+      "authorization_type": "bearer",
+      "verification_tokens": {
+         "openai": "abc123"
+      }
+   },
+   "api": {
+      "type": "openapi",
+      "url": "http://0.0.0.0:8080/.well-known/openapi.yaml",
+      "has_user_authentication": false
+   },
+   "logo_url": "http://0.0.0.0:8080/.well-known/logo.png",
+   "contact_email": "support@langchain.com",
+   "legal_info_url": "http://0.0.0.0:8080/legal"
+}
