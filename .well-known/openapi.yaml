@@ -1,7 +1,7 @@
 components:
   schemas:
     ConversationRequest:
-      description: Request message to Carplus.
+      description: Request message to the LangChain.
       properties:
         message:
           title: Message
@@ -11,7 +11,7 @@ components:
       title: ConversationRequest
       type: object
     ConversationResponse:
-      description: Deployed Carplus response.
+      description: Deployed LangChain response.
       properties:
         response:
           title: Response
