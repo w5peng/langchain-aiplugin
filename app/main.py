@@ -1,4 +1,4 @@
-""""Example LangChain Plugin."""
+""""Example Carplus Plugin."""
 import json
 import logging
 import os
@@ -6,14 +6,17 @@ from typing import Optional, cast
 import importlib
 from importlib.machinery import SourceFileLoader
 from pathlib import Path
+import datetime
 
 import uvicorn
 import yaml
-from app.api import ConversationRequest, ConversationResponse
+from app.api import ConversationRequest, ConversationResponse, ReserveURLRequest, ReserveURLResponse
 from fastapi import Body, Depends, FastAPI, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.staticfiles import StaticFiles
 from langchain.chains.base import Chain
+
+from starlette.responses import FileResponse
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -69,7 +72,7 @@ PLUGIN_INFORMATION = {
         "has_user_authentication": False,
     },
     "logo_url": f"{PUBLIC_API_URL}/.well-known/logo.png",
-    "contact_email": "support@langchain.com",
+    "contact_email": "weilun.peng@car-plus.com.tw",
     "legal_info_url": f"{PUBLIC_API_URL}/legal",
 }
 
@@ -126,6 +129,45 @@ async def chat(
         logger.error(e)
         raise HTTPException(status_code=500, detail="Internal Service Error")
 
+@app.post(
+    "/reserve_url",
+    response_model=ReserveURLResponse,
+    description="Generate pre-filled car-plus reservation url from pickup_date, return_date, pickup_store, return_store, car_type.",
+)
+async def reserve_url(
+    request: ReserveURLRequest = Body(...),
+):
+    try:
+        pickup_date = request.pickup_date
+        return_date = request.return_date
+
+        if pickup_date == None:
+            #generate date string of today at 9:00 am
+            pickup_date = datetime.datetime.now().strftime("%Y-%m-%d") + "T09:00:00"
+        if return_date == None:
+            #generate date string of tomorrow at 9:00 am
+            return_date = (datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%Y-%m-%d") + "T09:00:00"
+        
+        return ReserveURLResponse(response=f"https://www.car-plus.com.tw/reserve/step1?pickup_date={pickup_date}&return_date={return_date}&pickup_store={request.pickup_store}&return_store={request.return_store}&car_model={request.car_model}")
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail="Internal Service Error")
+
+
+@app.route("/.well-known/ai-plugin.json")
+async def get_manifest(request):
+    file_path = "./.well-known/ai-plugin.json"
+    return FileResponse(file_path, media_type="text/json")
+
+@app.route("/.well-known/logo.png")
+async def get_logo(request):
+    file_path = "./.well-known/logo.png"
+    return FileResponse(file_path, media_type="text/json")
+
+@app.route("/.well-known/openapi.yaml")
+async def get_openapi(request):
+    file_path = "./.well-known/openapi.yaml"
+    return FileResponse(file_path, media_type="text/json")
 
 @app.on_event("startup")
 async def startup():
@@ -151,5 +193,5 @@ def start():
     generate_plugin_docs()
     # The static files are used by the LLM to infer how to interoperate with the plugin.
     # These are auto-generated from the descriptions provided above and the API schema.
-    app.mount("/.well-known", StaticFiles(directory=".well-known"), name="static")
+    # app.mount("/.well-known", StaticFiles(directory=".well-known"), name="static")
     uvicorn.run("app.main:app", host=API_URL, port=API_PORT, reload=True)

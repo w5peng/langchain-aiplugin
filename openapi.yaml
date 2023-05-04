@@ -1,12 +1,5 @@
 components:
   schemas:
-    CarModel:
-      description: CarModel of Carplus's store
-      enum:
-      - Nissan_Sentra
-      - Nissan_Tiida
-      title: CarModel
-      type: string
     ConversationRequest:
       description: Request message to the Carplus Chatbot.
       properties:
@@ -35,46 +28,6 @@ components:
           title: Detail
           type: array
       title: HTTPValidationError
-      type: object
-    Location:
-      description: Location of Carplus's store.
-      enum:
-      - "\u65B0\u5E97\u9580\u5E02"
-      - "\u677F\u6A4B\u9580\u5E02"
-      title: Location
-      type: string
-    ReserveURLRequest:
-      description: Request message to make reservation via Carplus's Website.
-      properties:
-        car_model:
-          allOf:
-          - $ref: '#/components/schemas/CarModel'
-          default: Nissan Sentra
-        pickup_date:
-          title: Pickup Date
-          type: string
-        pickup_store:
-          allOf:
-          - $ref: '#/components/schemas/Location'
-          default: "\u65B0\u5E97\u9580\u5E02"
-        return_date:
-          title: Return Date
-          type: string
-        return_store:
-          allOf:
-          - $ref: '#/components/schemas/Location'
-          default: "\u677F\u6A4B\u9580\u5E02"
-      title: ReserveURLRequest
-      type: object
-    ReserveURLResponse:
-      description: Request message to make reservation via Carplus's Website.
-      properties:
-        response:
-          title: Response
-          type: string
-      required:
-      - response
-      title: ReserveURLResponse
       type: object
     ValidationError:
       properties:
@@ -134,32 +87,5 @@ paths:
       security:
       - HTTPBearer: []
       summary: Chat
-  /reserve_url:
-    post:
-      description: Generate pre-filled car-plus reservation url from pickup_date,
-        return_date, pickup_store, return_store, car_type.
-      operationId: reserve_url_reserve_url_post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ReserveURLRequest'
-        required: true
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ReserveURLResponse'
-          description: Successful Response
-        '422':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-          description: Validation Error
-      security:
-      - HTTPBearer: []
-      summary: Reserve Url
 servers:
 - url: http://0.0.0.0:8080

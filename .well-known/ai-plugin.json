@@ -8,7 +8,7 @@
       "type": "service_http",
       "authorization_type": "bearer",
       "verification_tokens": {
-         "openai": "abc123"
+         "openai": "12208883"
       }
    },
    "api": {
@@ -17,6 +17,6 @@
       "has_user_authentication": false
    },
    "logo_url": "http://0.0.0.0:8080/.well-known/logo.png",
-   "contact_email": "support@langchain.com",
+   "contact_email": "weilun.peng@car-plus.com.tw",
    "legal_info_url": "http://0.0.0.0:8080/legal"
 }
